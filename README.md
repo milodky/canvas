@@ -54,7 +54,7 @@ To initialize the class, simply run:
  => "john"
 
 ````
-You can also extend Canvas into one of our module let's say DataEngine:
+You can also extend Canvas into one of your modules let's say DataEngine:
 
 ````
 module DataEngine
