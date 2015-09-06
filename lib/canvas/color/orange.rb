@@ -25,11 +25,12 @@ module Canvas
         HashWithIndifferentAccess.new.tap do |hash|
           self.class.schema.each_key do |key|
             next if (value = self[key]).blank?
-            hash[key] =
+            value =
                 case value
                   when Array; value.map {|item| item.respond_to?(:to_hash) ? item.to_hash : item }
                   else      ; value.respond_to?(:to_hash) ? value.to_hash : value
                 end
+            hash[key] = value if value.present?
           end
         end
       end

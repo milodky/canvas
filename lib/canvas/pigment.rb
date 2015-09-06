@@ -3,16 +3,23 @@ module Canvas
   module Pigment
     include Color
     BUILT_IN_TYPES = %w(String Integer Float Symbol)
+    #############################################################
+    # when given an object, it tries to convert it into a hash
+    # first
+    #
     def initialize(params = {})
       params ||= {}
       params   = params.to_hash if params.is_a?(self.class)
       self.dump(params)
     end
 
+    #############################################################
+    #
+    #
     def dump(params)
       params = params.with_indifferent_access
-      self.class.schema.each_key do |attribute|
-        self.assign_attribute_value(attribute, params[attribute])
+      self.class.schema.each do |attribute, config|
+        self.assign_attribute_value(attribute, params[attribute], config)
       end
       params
     end
@@ -21,16 +28,14 @@ module Canvas
     #############################################################
     # assign the value to the object at the attribute level
     #
-    def assign_attribute_value(attribute, value)
-      config = self.class.schema[attribute]
-      types  = (self.class.type_cache[attribute] ||= config.scan(/\w+/))
-      begin
-        value = self.assign_layer_value(value, types, 0)
-        self.instance_variable_set("@#{attribute}", value)
-      rescue ArgumentError => err
-        Canvas.logger.(:error, err)
-        raise ArgumentError.new("attribute for #{self.class.class_name}: #{attribute} should be #{config}")
-      end
+    def assign_attribute_value(attribute, value, config = nil)
+      config ||= self.class.schema[attribute]
+      types    = (self.class.type_cache[attribute] ||= config.scan(/\w+/))
+      value    = self.assign_layer_value(value, types, 0)
+      self.instance_variable_set("@#{attribute}", value)
+    rescue ArgumentError => err
+      Canvas.logger(:error, err)
+      raise ArgumentError.new("Attribute for #{self.class.class_name}: #{attribute} should be kind of #{config}")
     end
 
     def assign_layer_value(value, types, layer_index)
@@ -55,7 +60,9 @@ module Canvas
     # defined in Object
     #
     def find_class_and_assign_value(type, value)
-      if (sub_class = self.class.nested_classes_mapping[type])
+      if value.nil?
+        value
+      elsif (sub_class = self.class.nested_classes_mapping[type])
         sub_class.new(value)
       elsif Canvas.const_defined?(type)
         Canvas.const_get(type).new(value)
@@ -67,10 +74,10 @@ module Canvas
     end
 
     def type_check(value, type)
-      return value if value.nil? || Object.const_defined?(type) && value.is_a?(Object.const_get(type))
+      return value if value.nil? || value.is_a?(Hash) || Object.const_defined?(type) && value.is_a?(Object.const_get(type))
       return value if self.class.respond_to?(:nested_classes) && self.class.nested_classes[type] && value.is_a?(self.class.nested_classes_mapping[type])
       return value if Canvas.const_defined?(type) && value.is_a?(Canvas.const_get(type))
-      raise ArgumentError.new('wrong type when assigning value')
+      raise ArgumentError.new("Wrong type when assigning value for #{type}")
     end
 
     def built_in_type_assignment(type, value)

@@ -1,8 +1,11 @@
 require 'active_support/all'
 require 'canvas/configuration'
 require 'canvas/crayon'
-require "canvas/version"
+require 'canvas/pigment'
+require 'canvas/version'
+require 'yaml'
 
 module Canvas
-  # Your code goes here...
+  include Pigment
+  extend self
 end
