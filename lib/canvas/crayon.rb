@@ -7,6 +7,7 @@ module Canvas
       class_name = definition['class_name']
       # a class may not have any nested classes
       definition['nested_classes'] ||= {}
+      definition['configuration']  ||= {}
       self.add_timestamp(definition)
 
       #############################################################
@@ -60,7 +61,7 @@ module Canvas
     end
 
     def add_timestamp(definition)
-      return if definition['configuration']['auto_timestamp']
+      return unless definition['configuration']['auto_timestamp']
       definition['schema'].merge!('updated_at' => 'String', 'created_at' => 'String')
     end
 
