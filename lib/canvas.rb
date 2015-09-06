@@ -1,5 +1,5 @@
 require 'active_support/all'
-require 'canvas/configuration'
+require 'canvas/palette'
 require 'canvas/crayon'
 require 'canvas/pigment'
 require 'canvas/version'
