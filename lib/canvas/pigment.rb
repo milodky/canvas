@@ -27,14 +27,18 @@ module Canvas
     # assign the value to the object at the attribute level
     #
     def assign_attribute_value(attribute, value)
-      types = self.class._attribute_types[attribute]
-      value = self.assign_layer_value(value, types, 0)
+      value = self.assign_layer_value(value, self.class._attribute_types[attribute], 0)
       self.instance_variable_set("@#{attribute}", value)
     rescue => err
       Canvas.logger(:error, err)
-      raise ArgumentError.new(" #{attribute} for #{self.class.class_name} should be kind of #{types.join("#")}, but got #{value.class}")
+      raise ArgumentError.new(" #{attribute} for #{self.class.class_name} should be kind of #{
+                    self.class._attribute_types[attribute].join("#")}, but got #{value.class}")
+
     end
 
+    ##############################################################
+    # try to find the final value and make it happen!
+    #
     def assign_layer_value(value, types, layer_index)
       type = types[layer_index]
       # Object is a keyword that objects of Object type can be applied to any classes
@@ -47,17 +51,8 @@ module Canvas
           return [] if value.nil?
           raise ArgumentError.new('Non-array value given for an array field!') unless value.is_a?(Array)
           value.map{|v| self.assign_layer_value(v, types, layer_index + 1)}
-        else self.find_class_and_assign_value(type, value)
+        else type.new(value) unless value.nil?
       end
-    end
-
-    #############################################################
-    # nested class has the highest priority, then comes the
-    # classes defined within Canvas followed by the classes
-    # defined in Object
-    #
-    def find_class_and_assign_value(type, value)
-      type.new(value) unless value.nil?
     end
 
     def check_layer_type(value, type)
