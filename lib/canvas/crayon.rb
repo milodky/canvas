@@ -16,7 +16,6 @@ module Canvas
         base_module.send(:set_class_instance_variables, *[self, {
                                                                   :definition       => definition,
                                                                   :schema           => definition['schema'],
-                                                                  :class_name       => definition['class_name'],
                                                                   :_base            => base,
                                                                   :_attribute_types => {}
                                                                 }

@@ -31,7 +31,7 @@ module Canvas
       self.instance_variable_set("@#{attribute}", value)
     rescue => err
       Canvas.logger(:error, err)
-      raise ArgumentError.new(" #{attribute} for #{self.class.class_name} should be kind of #{
+      raise ArgumentError.new(" #{attribute} for #{self.class.definition['class_name']} should be kind of #{
                     self.class._attribute_types[attribute].join("#")}, but got #{value.class}")
 
     end
