@@ -74,7 +74,7 @@ Then you can do:
 DataEngine::Person.new ...
 ````
 
-Or you can refer to spec/lib/canvas_spec.rb for details
+Or you can refer to spec/lib/ for details
 ## Contributing
 
 1. Fork it ( https://github.com/[my-github-username]/canvas/fork )
