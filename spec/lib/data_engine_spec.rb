@@ -1,13 +1,18 @@
 require 'spec_helper'
-Canvas.initialize!(File.expand_path('../yamls/person.yml', __FILE__))
+
+module DataEngine
+  extend Canvas
+end
+
+DataEngine.initialize!(File.expand_path('../yamls/person.yml', __FILE__))
 
 describe 'initialization of a empty hash' do
   before(:all) do
-    @person      = Canvas::Person.new {}
+    @person      = DataEngine::Person.new {}
   end
 
-  it 'should be kind of Canvas::Person' do
-    expect(@person).to be_kind_of(Canvas::Person)
+  it 'should be kind of DataEngine::Person' do
+    expect(@person).to be_kind_of(DataEngine::Person)
   end
 
   it 'should have a nil id' do
@@ -46,10 +51,10 @@ end
 describe 'initialization of a concrete hash' do
   before(:all) do
     @person_hash = valid_person_hash
-    @person      = Canvas::Person.new @person_hash
+    @person      = DataEngine::Person.new @person_hash
   end
-  it 'should be kind of Canvas::Person' do
-    expect(@person).to be_kind_of(Canvas::Person)
+  it 'should be kind of DataEngine::Person' do
+    expect(@person).to be_kind_of(DataEngine::Person)
   end
 
 
@@ -74,7 +79,7 @@ describe 'initialization of a concrete hash' do
       expect(@person.phones).to be_kind_of(Array)
       expect(@person.phones.size).to eql(2)
       @person.phones.each_with_index do |phone, i|
-        expect(phone).to be_kind_of(Canvas::Person::Phone)
+        expect(phone).to be_kind_of(DataEngine::Person::Phone)
         expect(phone.number).to eql(@person_hash[:phones][i][:number])
         expect(phone.type).to eql(@person_hash[:phones][i][:type])
       end
@@ -85,12 +90,12 @@ describe 'initialization of a concrete hash' do
       expect(@person.locations).to be_kind_of(Array)
       expect(@person.locations.size).to eql(1)
       @person.locations.each_with_index do |location, i|
-        expect(location).to be_kind_of(Canvas::Person::Location)
+        expect(location).to be_kind_of(DataEngine::Person::Location)
         expect(location.address).to eql(@person_hash[:locations][i][:address])
         expect(location.city).to eql(@person_hash[:locations][i][:city])
         expect(location.state).to eql(@person_hash[:locations][i][:state])
         expect(location.zip).to eql(@person_hash[:locations][i][:zip])
-        expect(location.coordinate).to be_kind_of(Canvas::Person::Coordinate)
+        expect(location.coordinate).to be_kind_of(DataEngine::Person::Coordinate)
         expect(location.coordinate.longitude).to eql(@person_hash[:locations][i][:coordinate][:longitude])
         expect(location.coordinate.latitude).to eql(@person_hash[:locations][i][:coordinate][:latitude])
       end
@@ -126,7 +131,7 @@ describe 'initialization of a concrete hash' do
       expect(@person[:phones]).to be_kind_of(Array)
       expect(@person[:phones].size).to eql(2)
       @person[:phones].each_with_index do |phone, i|
-        expect(phone).to be_kind_of(Canvas::Person::Phone)
+        expect(phone).to be_kind_of(DataEngine::Person::Phone)
         expect(phone.number).to eql(@person_hash[:phones][i][:number])
         expect(phone.type).to eql(@person_hash[:phones][i][:type])
       end
@@ -137,12 +142,12 @@ describe 'initialization of a concrete hash' do
       expect(@person[:locations]).to be_kind_of(Array)
       expect(@person[:locations].size).to eql(1)
       @person[:locations].each_with_index do |location, i|
-        expect(location).to be_kind_of(Canvas::Person::Location)
+        expect(location).to be_kind_of(DataEngine::Person::Location)
         expect(location.address).to eql(@person_hash[:locations][i][:address])
         expect(location.city).to eql(@person_hash[:locations][i][:city])
         expect(location.state).to eql(@person_hash[:locations][i][:state])
         expect(location.zip).to eql(@person_hash[:locations][i][:zip])
-        expect(location.coordinate).to be_kind_of(Canvas::Person::Coordinate)
+        expect(location.coordinate).to be_kind_of(DataEngine::Person::Coordinate)
         expect(location.coordinate.longitude).to eql(@person_hash[:locations][i][:coordinate][:longitude])
         expect(location.coordinate.latitude).to eql(@person_hash[:locations][i][:coordinate][:latitude])
       end
@@ -193,7 +198,7 @@ describe 'initialization of a concrete hash' do
 
     it 'should have an array of locations' do
       locations = [{:address => random_string, :city => random_string, :state => random_number, :zip => random_string,
-                   :coordinate => {:latitude => random_number, :longitude => random_number}}]
+                    :coordinate => {:latitude => random_number, :longitude => random_number}}]
       @person.locations = locations
       expect(@person.locations.size).to eql(1)
       expect(@person.locations).to be_kind_of(Array)
@@ -264,6 +269,6 @@ end
 
 describe 'wrong type assignment' do
   it 'should raise an ArgumentError' do
-    expect{Canvas::Person.new(:id => '123')}.to raise_error(ArgumentError)
+    expect{DataEngine::Person.new(:id => '123')}.to raise_error(ArgumentError)
   end
 end
