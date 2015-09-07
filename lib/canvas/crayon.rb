@@ -4,7 +4,6 @@ module Canvas
   module Pigment
     def initialize!(path)
       definition = (path.is_a?(Hash) ? path : YAML.load_file(path)).with_indifferent_access
-      class_name = definition['class_name']
       # a class may not have any nested classes
       definition['nested_classes'] ||= {}
       definition['configuration']  ||= {}
@@ -29,7 +28,7 @@ module Canvas
       #############################################################
       # end of defining a new class and register this class under
       # Canvas
-      const_set(class_name, klass)
+      const_set(definition['class_name'], klass)
     rescue => err
       self.logger(:error, err)
       raise ArgumentError.new('Failed to define the class!')
@@ -40,9 +39,8 @@ module Canvas
     # nested class will be defined under the main klass namespace
     #
     def add_nested_classes(klass)
-      nested_classes = []
       _base          = klass._base
-      klass.definition['nested_classes'].each do |name, schema|
+      nested_classes = klass.definition['nested_classes'].map do |name, schema|
         raise "Error: Class #{name} is already registered!" if klass.const_defined?(name)
         nested_class = Class.new do
           self.include Canvas::Pigment
@@ -55,7 +53,6 @@ module Canvas
           )
         end
         klass.const_set(name, nested_class)
-        nested_classes << nested_class
       end
       nested_classes.each {|sub_class| _base.setup_attribute_type(sub_class) }
     end
@@ -91,12 +88,7 @@ module Canvas
       # Object is a keyword that objects of Object type can be applied to any classes
       return (types[layer_index] = Object) if type == 'Object'
 
-      types[layer_index] =
-          case type
-            when 'Hash' ; Hash
-            when 'Array'; Array
-            else          self.other_type(klass, type)
-          end
+      types[layer_index] = self.other_type(klass, type)
       # go to setup the next layer
       self.setup_layer_type(klass, types, layer_index + 1)
     end
