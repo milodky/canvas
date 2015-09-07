@@ -30,10 +30,10 @@ module Canvas
       value = self.assign_layer_value(value, self.class._attribute_types[attribute], 0)
       self.instance_variable_set("@#{attribute}", value)
     rescue => err
-      Canvas.logger(:error, err)
+      Canvas.logger(:error, err.message)
+      Canvas.logger(:error, err.backtrace)
       raise ArgumentError.new(" #{attribute} for #{self.class.definition['class_name']} should be kind of #{
                     self.class._attribute_types[attribute].join("#")}, but got #{value.class}")
-
     end
 
     ##############################################################

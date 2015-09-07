@@ -12,7 +12,6 @@ module Canvas
       klass = Class.new do
         self.include Canvas::Pigment
         attr_accessor *definition['schema'].keys
-
         base_module.send(:set_class_instance_variables, *[self, {
                                                                   :definition       => definition,
                                                                   :schema           => definition['schema'],
@@ -32,7 +31,9 @@ module Canvas
       base_module.add_nested_classes(klass)
       base_module.setup_attribute_type(klass)
     rescue => err
-      self.logger(:error, err)
+      self.logger(:error, err.message)
+      self.logger(:error, err.backtrace)
+
       raise ArgumentError.new('Failed to define the class!')
     end
     protected

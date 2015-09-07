@@ -8,5 +8,6 @@ require 'andand'
 
 module Canvas
   include Crayon
+  include Palette
   extend self
 end

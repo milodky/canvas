@@ -61,7 +61,7 @@ To initialize the class, simply run:
  => nil
 
 ````
-You can also extend Canvas into one of your modules let's say DataEngine:
+You can also extend Canvas into one of your modules let's say DataEngine(to be tested):
 
 ````
 module DataEngine
