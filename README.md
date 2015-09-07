@@ -52,7 +52,8 @@ To initialize the class, simply run:
 2.1.2 :003 > person = Canvas::Person.new :first_name => 'john',
                                          :last_name => 'smith',
                                          :phones => [{:number => '123'}],
-                                         :locations => [{:city => 'los angeles', :state => 6}], :emails => ['abc@gmail.com']
+                                         :locations => [{:city => 'los angeles', :state => 6}],
+                                         :emails => ['abc@gmail.com']
  => #<Canvas::Person:0x007fc393ae9940 @id=nil, @first_name="john", @middle_name=nil, @last_name="smith", @phones=[#<Canvas::Person::Phone:0x007fc393ae8608 @number="123", @type=nil>], @emails=["abc@gmail.com"], @locations=[#<Canvas::Person::Location:0x007fc393ae3608 @address=nil, @city="los angeles", @state=6, @zip=nil, @country=nil, @latitude=nil, @longitude=nil>]>
 2.1.2 :004 > person.locations[0].city
  => "los angeles"

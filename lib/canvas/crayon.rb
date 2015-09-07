@@ -3,7 +3,7 @@ require 'yaml'
 module Canvas
   module Pigment
     def initialize!(path)
-      definition = YAML.load_file(path).with_indifferent_access
+      definition = path.is_a?(Hash) ? path : YAML.load_file(path).with_indifferent_access
       class_name = definition['class_name']
       # a class may not have any nested classes
       definition['nested_classes'] ||= {}
@@ -17,12 +17,12 @@ module Canvas
         self.include Canvas::Pigment
         attr_accessor *definition['schema'].keys
         Canvas.set_class_instance_variables(self, :definition             => definition,
-                                            :schema                 => definition['schema'],
-                                            :nested_classes         => definition['nested_classes'],
-                                            :class_name             => definition['class_name'],
-                                            :type_cache             => {},
-                                            # shared by its sub classes
-                                            :nested_classes_mapping => {}
+                                                  :schema                 => definition['schema'],
+                                                  :nested_classes         => definition['nested_classes'],
+                                                  :class_name             => definition['class_name'],
+                                                  :type_cache             => {},
+                                                  # shared by its sub classes
+                                                  :nested_classes_mapping => {}
         )
 
         ###########################################################
@@ -39,11 +39,11 @@ module Canvas
 
               attr_accessor *schema.keys
               Canvas.set_class_instance_variables(self, :schema                 => schema,
-                                                  # shared by other nested classes under the same namespace
-                                                  :nested_classes_mapping => nested_classes_mapping,
-                                                  :nested_classes         => nested_classes,
-                                                  :class_name             => name,
-                                                  :type_cache             => {}
+                                                        # shared by other nested classes under the same namespace
+                                                        :nested_classes_mapping => nested_classes_mapping,
+                                                        :nested_classes         => nested_classes,
+                                                        :class_name             => name,
+                                                        :type_cache             => {}
               )
 
             end
@@ -58,6 +58,9 @@ module Canvas
       # end of defining a new class and register this class under
       # Canvas
       const_set(class_name, klass)
+    rescue => err
+      Canvas.logger(:error, err)
+      raise ArgumentError.new('Failed to define the class!')
     end
 
     def add_timestamp(definition)

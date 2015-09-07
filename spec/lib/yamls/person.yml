@@ -1,0 +1,24 @@
+class_name: Person
+
+schema:
+  id:           Integer
+  first_name:   String
+  middle_name:  String
+  last_name:    String
+  phones:       Array[Phone]
+  emails:       Array[String]
+  locations:    Array[Location]
+nested_classes:
+  Location:
+    address:    String
+    city:       String
+    state:      Integer
+    zip:        String
+    country:    String
+    coordinate: Coordinate
+  Phone:
+    number:     String
+    type:       String
+  Coordinate:
+    latitude:  Integer
+    longitude: Integer
