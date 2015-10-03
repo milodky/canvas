@@ -63,7 +63,7 @@ module Canvas
     #
     def setup_attribute_type(klass)
       klass.schema.each do |attr, config|
-        klass._attribute_types[attr] = self.setup_layer_type(klass, config.scan(/\w+/), 0)
+        klass._attribute_types[attr] = self.setup_layer_type(klass, config.split(/[|]/), 0)
       end
     end
 
